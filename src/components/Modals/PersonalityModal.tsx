@@ -74,7 +74,7 @@ export const PersonalityModal: React.FC<PersonalityModalProps> = ({
                     type="text"
                     value={nameInput}
                     onChange={(e) => setNameInput(e.target.value)}
-                    className="bg-white text-slate-900 font-black text-sm px-2 py-0.5 rounded-lg outline-none max-w-[140px]"
+                    className="bg-white text-slate-900 font-black text-base px-2 py-0.5 rounded-lg outline-none max-w-[140px]"
                     autoFocus
                   />
                   <button type="submit" className="text-xs bg-pink-700 px-2 py-1 rounded-md font-bold">

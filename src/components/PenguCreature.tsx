@@ -21,6 +21,9 @@ interface PenguCreatureProps {
   bubbleCount?: number;
   mouthOpenOverride?: boolean;
   scale?: number;
+  isPeekaboo?: boolean;
+  isBathMode?: boolean;
+  isRefusing?: boolean;
 }
 
 export const PenguCreature: React.FC<PenguCreatureProps> = ({
@@ -36,6 +39,9 @@ export const PenguCreature: React.FC<PenguCreatureProps> = ({
   bubbleCount = 0,
   mouthOpenOverride = false,
   scale = 1.0,
+  isPeekaboo = false,
+  isBathMode = false,
+  isRefusing = false,
 }) => {
   const [isBlinking, setIsBlinking] = useState(false);
   const [isJiggling, setIsJiggling] = useState(false);
@@ -223,20 +229,29 @@ export const PenguCreature: React.FC<PenguCreatureProps> = ({
         ))}
       </AnimatePresence>
 
-      {/* Main Penguin Body Container with Bounce and Breathe Animations */}
+      {/* Main Penguin Body Container with Bounce, Breathe, Refuse, and Squish Animations */}
       <motion.div
         animate={{
           scale: isJiggling ? [1, 1.08, 0.94, 1.02, 1] : 1,
-          rotate: isJiggling ? [-2, 2, -1, 1, 0] : isDrying ? [-4, 4, -4, 4, 0] : 0,
+          rotate: isRefusing
+            ? [-14, 14, -12, 12, -6, 6, 0]
+            : isJiggling
+            ? [-2, 2, -1, 1, 0]
+            : isDrying
+            ? [-4, 4, -4, 4, 0]
+            : 0,
           y: isSleeping ? [0, 4, 0] : [0, -6, 0],
         }}
         transition={{
           y: { duration: isSleeping ? 3.5 : 2.8, repeat: Infinity, ease: 'easeInOut' },
           scale: { duration: 0.3 },
-          rotate: { duration: isDrying ? 0.2 : 0.3, repeat: isDrying ? Infinity : 0 },
+          rotate: {
+            duration: isRefusing ? 0.6 : isDrying ? 0.2 : 0.3,
+            repeat: isDrying ? Infinity : 0,
+          },
         }}
         onMouseMove={handlePetMove}
-        className="relative flex flex-col items-center justify-center w-56 h-68 sm:w-64 sm:h-76 max-h-[38vh] aspect-[320/380]"
+        className="relative flex flex-col items-center justify-center w-56 h-68 sm:w-64 sm:h-76 max-h-[36vh] sm:max-h-[42vh] aspect-[320/380]"
       >
         {/* SVG Drawing of the Plushie */}
         <svg
@@ -251,28 +266,57 @@ export const PenguCreature: React.FC<PenguCreatureProps> = ({
               <feComposite in2="SourceGraphic" in="gl" operator="in" />
             </filter>
 
-            {/* Soft Radial Gradients */}
-            <radialGradient id="pinkFleeceGrad" cx="45%" cy="40%" r="65%">
-              <stop offset="0%" stopColor={hoodieColors.base} />
-              <stop offset="85%" stopColor={hoodieColors.shade} />
-              <stop offset="100%" stopColor="#db2777" stopOpacity="0.4" />
+            {/* 3D Soft Radial Gradients for Volumetric Plush Depth */}
+            <radialGradient id="pinkFleeceGrad" cx="38%" cy="32%" r="72%">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.4" />
+              <stop offset="25%" stopColor={hoodieColors.base} />
+              <stop offset="80%" stopColor={hoodieColors.shade} />
+              <stop offset="100%" stopColor="#9d174d" stopOpacity="0.5" />
             </radialGradient>
 
-            <radialGradient id="plushWhiteCheeks" cx="50%" cy="45%" r="55%">
+            {/* Natural Fluffy Charcoal Body (When Clothes are Off in Bath) */}
+            <radialGradient id="naturalPlushBody" cx="40%" cy="32%" r="70%">
+              <stop offset="0%" stopColor="#64748b" />
+              <stop offset="40%" stopColor="#334155" />
+              <stop offset="85%" stopColor="#1e293b" />
+              <stop offset="100%" stopColor="#0f172a" />
+            </radialGradient>
+
+            {/* Cute Bath Towel Gradient */}
+            <linearGradient id="bathTowelGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#38bdf8" />
+              <stop offset="50%" stopColor="#0284c7" />
+              <stop offset="100%" stopColor="#075985" />
+            </linearGradient>
+
+            {/* 3D Spherical Highlight on Hoodie */}
+            <radialGradient id="volumetricHighlight" cx="35%" cy="30%" r="50%">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.45" />
+              <stop offset="60%" stopColor="#ffffff" stopOpacity="0.08" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+            </radialGradient>
+
+            {/* Plush White Cheeks & Belly */}
+            <radialGradient id="plushWhiteCheeks" cx="45%" cy="38%" r="60%">
               <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="85%" stopColor="#f1f5f9" />
-              <stop offset="100%" stopColor="#e2e8f0" />
+              <stop offset="75%" stopColor="#f8fafc" />
+              <stop offset="100%" stopColor="#cbd5e1" />
             </radialGradient>
 
-            <radialGradient id="orangeBeakGrad" cx="45%" cy="35%" r="60%">
-              <stop offset="0%" stopColor="#fb923c" />
-              <stop offset="70%" stopColor="#ea580c" />
-              <stop offset="100%" stopColor="#c2410c" />
+            {/* 3D Shiny Beak Gradient */}
+            <radialGradient id="orangeBeakGrad" cx="38%" cy="28%" r="65%">
+              <stop offset="0%" stopColor="#fed7aa" />
+              <stop offset="35%" stopColor="#fb923c" />
+              <stop offset="80%" stopColor="#ea580c" />
+              <stop offset="100%" stopColor="#9a3412" />
             </radialGradient>
 
-            <radialGradient id="orangeFootGrad" cx="50%" cy="35%" r="65%">
-              <stop offset="0%" stopColor="#fb923c" />
+            {/* 3D Plush Feet Gradient */}
+            <radialGradient id="orangeFootGrad" cx="42%" cy="28%" r="70%">
+              <stop offset="0%" stopColor="#ffedd5" />
+              <stop offset="30%" stopColor="#fb923c" />
               <stop offset="85%" stopColor="#ea580c" />
+              <stop offset="100%" stopColor="#9a3412" />
             </radialGradient>
 
             {/* Pattern Masks */}
@@ -344,13 +388,22 @@ export const PenguCreature: React.FC<PenguCreatureProps> = ({
           </g>
 
           {/* Wings / Flippers (Behind or Side) */}
-          {/* Left Wing (Pink Fleece Sleeve) */}
+          {/* Left Wing */}
           <motion.g
-            animate={{
-              rotate: isJiggling ? -14 : isDrying ? [-12, -4, -12] : [-2, -6, -2],
-              y: isJiggling ? -4 : 0,
+            animate={
+              isPeekaboo
+                ? { rotate: 78, x: 42, y: -65 }
+                : {
+                    rotate: isJiggling ? -14 : isDrying ? [-12, -4, -12] : [-2, -6, -2],
+                    y: isJiggling ? -4 : 0,
+                    x: 0,
+                  }
+            }
+            transition={{
+              repeat: isPeekaboo ? 0 : Infinity,
+              duration: isPeekaboo ? 0.3 : 1.8,
+              ease: 'easeInOut',
             }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
             style={{ transformOrigin: '70px 200px' }}
           >
             <ellipse
@@ -359,21 +412,30 @@ export const PenguCreature: React.FC<PenguCreatureProps> = ({
               rx="26"
               ry="45"
               transform="rotate(-25 60 210)"
-              fill="url(#pinkFleeceGrad)"
-              stroke="#f472b6"
+              fill={isBathMode ? 'url(#naturalPlushBody)' : 'url(#pinkFleeceGrad)'}
+              stroke={isBathMode ? '#334155' : '#f472b6'}
               strokeWidth="1.5"
             />
             {/* Fluffy wing tip */}
-            <circle cx="44" cy="235" r="14" fill="#ffffff" opacity="0.3" />
+            <circle cx="44" cy="235" r="14" fill="#ffffff" opacity="0.4" />
           </motion.g>
 
-          {/* Right Wing (Pink Fleece Sleeve) */}
+          {/* Right Wing */}
           <motion.g
-            animate={{
-              rotate: isJiggling ? 14 : isDrying ? [12, 4, 12] : [2, 6, 2],
-              y: isJiggling ? -4 : 0,
+            animate={
+              isPeekaboo
+                ? { rotate: -78, x: -42, y: -65 }
+                : {
+                    rotate: isJiggling ? 14 : isDrying ? [12, 4, 12] : [2, 6, 2],
+                    y: isJiggling ? -4 : 0,
+                    x: 0,
+                  }
+            }
+            transition={{
+              repeat: isPeekaboo ? 0 : Infinity,
+              duration: isPeekaboo ? 0.3 : 1.8,
+              ease: 'easeInOut',
             }}
-            transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
             style={{ transformOrigin: '250px 200px' }}
           >
             <ellipse
@@ -382,164 +444,242 @@ export const PenguCreature: React.FC<PenguCreatureProps> = ({
               rx="26"
               ry="45"
               transform="rotate(25 260 210)"
-              fill="url(#pinkFleeceGrad)"
-              stroke="#f472b6"
+              fill={isBathMode ? 'url(#naturalPlushBody)' : 'url(#pinkFleeceGrad)'}
+              stroke={isBathMode ? '#334155' : '#f472b6'}
               strokeWidth="1.5"
             />
             {/* Fluffy wing tip */}
-            <circle cx="276" cy="235" r="14" fill="#ffffff" opacity="0.3" />
+            <circle cx="276" cy="235" r="14" fill="#ffffff" opacity="0.4" />
           </motion.g>
 
-          {/* Main Round Body (Jacket + Belly) */}
-          <ellipse
-            cx="160"
-            cy="245"
-            rx="102"
-            ry="98"
-            fill="url(#pinkFleeceGrad)"
-            stroke={hoodieColors.shade}
-            strokeWidth="3"
-            className="filter drop-shadow-sm"
-          />
-
-          {/* Custom pattern overlay if active */}
-          {customization.pattern === 'stripes' && (
-            <ellipse cx="160" cy="245" rx="102" ry="98" fill="url(#pattern-stripes)" />
-          )}
-          {customization.pattern === 'polka_dots' && (
-            <ellipse cx="160" cy="245" rx="102" ry="98" fill="url(#pattern-dots)" />
-          )}
-          {customization.pattern === 'stars' && (
-            <ellipse cx="160" cy="245" rx="102" ry="98" fill="url(#pattern-stars)" />
-          )}
-          {customization.pattern === 'hearts' && (
-            <ellipse cx="160" cy="245" rx="102" ry="98" fill="url(#pattern-hearts)" />
-          )}
-
-          {/* Soft White Plush Belly peaking at the bottom */}
-          <ellipse
-            cx="160"
-            cy="318"
-            rx="64"
-            ry="24"
-            fill="url(#plushWhiteCheeks)"
-            opacity="0.9"
-          />
-
-          {/* Zipper Line down the center */}
-          <line
-            x1="160"
-            y1="162"
-            x2="160"
-            y2="330"
-            stroke={hoodieColors.zipper}
-            strokeWidth="5"
-            strokeLinecap="round"
-          />
-          {/* Zipper Teeth texture */}
-          <line
-            x1="160"
-            y1="164"
-            x2="160"
-            y2="328"
-            stroke="#ffffff"
-            strokeWidth="2"
-            strokeDasharray="2,3"
-            opacity="0.8"
-          />
-
-          {/* Realistic Zipper Puller Slider matching reference photo */}
-          <g transform="translate(160, 185)">
-            <rect
-              x="-6"
-              y="-10"
-              width="12"
-              height="16"
-              rx="4"
-              fill={hoodieColors.zipper}
-              stroke="#ffffff"
-              strokeWidth="1.2"
-            />
-            {/* Zipper Charm / Pull Tab */}
-            {customization.zipperCharm === 'star' ? (
-              <polygon
-                points="0,6 3,14 11,14 5,19 7,27 0,22 -7,27 -5,19 -11,14 -3,14"
-                fill="#fbbf24"
-                stroke="#d97706"
-                strokeWidth="1"
-              />
-            ) : customization.zipperCharm === 'heart' ? (
-              <path
-                d="M 0 10 C -6 4, -10 12, 0 20 C 10 12, 6 4, 0 10"
-                fill="#f43f5e"
-                stroke="#be123c"
-                strokeWidth="1"
-              />
-            ) : customization.zipperCharm === 'fish' ? (
-              <path
-                d="M -4 8 Q 4 14 0 24 Q -4 18 -4 8 M 0 24 L -4 28 L 4 28 Z"
-                fill="#38bdf8"
-                stroke="#0284c7"
-                strokeWidth="1"
-              />
-            ) : customization.zipperCharm === 'gold_ring' ? (
-              <circle
-                cx="0"
-                cy="14"
-                r="7"
-                fill="none"
-                stroke="#f59e0b"
+          {/* Main Round Body */}
+          {isBathMode ? (
+            /* Clothes Off: Natural Fluffy Penguin Body with Bath Towel */
+            <g>
+              {/* Charcoal Plush Body */}
+              <ellipse
+                cx="160"
+                cy="245"
+                rx="102"
+                ry="98"
+                fill="url(#naturalPlushBody)"
+                stroke="#1e293b"
                 strokeWidth="3"
+                className="filter drop-shadow-sm"
               />
-            ) : (
-              // Classic pull tab like in the photo
-              <rect
-                x="-3.5"
-                y="6"
-                width="7"
-                height="15"
-                rx="3.5"
-                fill={hoodieColors.zipper}
+
+              {/* Big Fluffy White Tummy */}
+              <ellipse
+                cx="160"
+                cy="252"
+                rx="74"
+                ry="68"
+                fill="url(#plushWhiteCheeks)"
+                stroke="#f1f5f9"
+                strokeWidth="2"
+              />
+
+              {/* Cute Wrapped Bath Towel around the waist */}
+              <path
+                d="M 88 280 Q 160 298 232 280 L 226 338 Q 160 348 94 338 Z"
+                fill="url(#bathTowelGrad)"
+                stroke="#0369a1"
+                strokeWidth="2"
+              />
+              {/* Bath Towel Fold / Knot */}
+              <path
+                d="M 146 284 Q 160 270 174 284 Q 160 294 146 284 Z"
+                fill="#7dd3fc"
+                stroke="#0284c7"
+                strokeWidth="1.5"
+              />
+              <line
+                x1="94"
+                y1="330"
+                x2="226"
+                y2="330"
                 stroke="#ffffff"
-                strokeWidth="1"
+                strokeWidth="1.5"
+                strokeDasharray="3,3"
+                opacity="0.7"
               />
-            )}
-          </g>
+            </g>
+          ) : (
+            /* Clothes On: Fleece Hoodie with Zipper, Pockets & Volumetric 3D Shading */
+            <g>
+              <ellipse
+                cx="160"
+                cy="245"
+                rx="102"
+                ry="98"
+                fill="url(#pinkFleeceGrad)"
+                stroke={hoodieColors.shade}
+                strokeWidth="3"
+                className="filter drop-shadow-sm"
+              />
 
-          {/* Deep Pink Angled Pocket Welts matching the photo! */}
-          {/* Left Pocket Welt */}
-          <path
-            d="M 98 250 L 82 284"
-            stroke={hoodieColors.pocket}
-            strokeWidth="12"
-            strokeLinecap="round"
-            className="filter drop-shadow-sm"
-          />
-          <path
-            d="M 98 250 L 82 284"
-            stroke="rgba(0,0,0,0.15)"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
+              {/* 3D Volumetric Soft Highlight */}
+              <ellipse
+                cx="140"
+                cy="210"
+                rx="65"
+                ry="45"
+                fill="url(#volumetricHighlight)"
+              />
 
-          {/* Right Pocket Welt */}
-          <path
-            d="M 222 250 L 238 284"
-            stroke={hoodieColors.pocket}
-            strokeWidth="12"
-            strokeLinecap="round"
-            className="filter drop-shadow-sm"
-          />
-          <path
-            d="M 222 250 L 238 284"
-            stroke="rgba(0,0,0,0.15)"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
+              {/* Custom pattern overlay if active */}
+              {customization.pattern === 'stripes' && (
+                <ellipse cx="160" cy="245" rx="102" ry="98" fill="url(#pattern-stripes)" />
+              )}
+              {customization.pattern === 'polka_dots' && (
+                <ellipse cx="160" cy="245" rx="102" ry="98" fill="url(#pattern-dots)" />
+              )}
+              {customization.pattern === 'stars' && (
+                <ellipse cx="160" cy="245" rx="102" ry="98" fill="url(#pattern-stars)" />
+              )}
+              {customization.pattern === 'hearts' && (
+                <ellipse cx="160" cy="245" rx="102" ry="98" fill="url(#pattern-hearts)" />
+              )}
+
+              {/* Soft White Plush Belly peaking at the bottom */}
+              <ellipse
+                cx="160"
+                cy="318"
+                rx="64"
+                ry="24"
+                fill="url(#plushWhiteCheeks)"
+                opacity="0.9"
+              />
+
+              {/* Zipper Line down the center */}
+              <line
+                x1="160"
+                y1="162"
+                x2="160"
+                y2="330"
+                stroke={hoodieColors.zipper}
+                strokeWidth="5"
+                strokeLinecap="round"
+              />
+              {/* Zipper Teeth texture */}
+              <line
+                x1="160"
+                y1="164"
+                x2="160"
+                y2="328"
+                stroke="#ffffff"
+                strokeWidth="2"
+                strokeDasharray="2,3"
+                opacity="0.8"
+              />
+
+              {/* Realistic Zipper Puller Slider matching reference photo */}
+              <g transform="translate(160, 185)">
+                <rect
+                  x="-6"
+                  y="-10"
+                  width="12"
+                  height="16"
+                  rx="4"
+                  fill={hoodieColors.zipper}
+                  stroke="#ffffff"
+                  strokeWidth="1.2"
+                />
+                {/* Zipper Charm / Pull Tab */}
+                {customization.zipperCharm === 'star' ? (
+                  <polygon
+                    points="0,6 3,14 11,14 5,19 7,27 0,22 -7,27 -5,19 -11,14 -3,14"
+                    fill="#fbbf24"
+                    stroke="#d97706"
+                    strokeWidth="1"
+                  />
+                ) : customization.zipperCharm === 'heart' ? (
+                  <path
+                    d="M 0 10 C -6 4, -10 12, 0 20 C 10 12, 6 4, 0 10"
+                    fill="#f43f5e"
+                    stroke="#be123c"
+                    strokeWidth="1"
+                  />
+                ) : customization.zipperCharm === 'fish' ? (
+                  <path
+                    d="M -4 8 Q 4 14 0 24 Q -4 18 -4 8 M 0 24 L -4 28 L 4 28 Z"
+                    fill="#38bdf8"
+                    stroke="#0284c7"
+                    strokeWidth="1"
+                  />
+                ) : customization.zipperCharm === 'gold_ring' ? (
+                  <circle
+                    cx="0"
+                    cy="14"
+                    r="7"
+                    fill="none"
+                    stroke="#f59e0b"
+                    strokeWidth="3"
+                  />
+                ) : (
+                  // Classic pull tab like in the photo
+                  <rect
+                    x="-3.5"
+                    y="6"
+                    width="7"
+                    height="15"
+                    rx="3.5"
+                    fill={hoodieColors.zipper}
+                    stroke="#ffffff"
+                    strokeWidth="1"
+                  />
+                )}
+              </g>
+
+              {/* Deep Pink Angled Pocket Welts matching the photo! */}
+              {/* Left Pocket Welt */}
+              <path
+                d="M 98 250 L 82 284"
+                stroke={hoodieColors.pocket}
+                strokeWidth="12"
+                strokeLinecap="round"
+                className="filter drop-shadow-sm"
+              />
+              <path
+                d="M 98 250 L 82 284"
+                stroke="rgba(255,255,255,0.4)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeDasharray="4,3"
+              />
+
+              {/* Right Pocket Welt */}
+              <path
+                d="M 222 250 L 238 284"
+                stroke={hoodieColors.pocket}
+                strokeWidth="12"
+                strokeLinecap="round"
+                className="filter drop-shadow-sm"
+              />
+              <path
+                d="M 222 250 L 238 284"
+                stroke="rgba(255,255,255,0.4)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeDasharray="4,3"
+              />
+            </g>
+          )}
 
           {/* PENGUIN HEAD & HOOD */}
-          {/* Hood Outer Border (if hood is up) */}
-          {customization.hoodUp && (
+          {/* Rubber ducky perched on head in bath mode */}
+          {isBathMode && (
+            <g transform="translate(160, 50) scale(0.95)" className="drop-shadow-md">
+              <ellipse cx="0" cy="8" rx="16" ry="11" fill="#facc15" stroke="#ca8a04" strokeWidth="1.5" />
+              <circle cx="10" cy="-2" r="9" fill="#facc15" stroke="#ca8a04" strokeWidth="1.5" />
+              <polygon points="18,-2 26,0 18,3" fill="#ea580c" />
+              <circle cx="12" cy="-4" r="1.8" fill="#0f172a" />
+              <circle cx="13" cy="-5" r="0.6" fill="#ffffff" />
+            </g>
+          )}
+
+          {/* Hood Outer Border (if hood is up and not in bath) */}
+          {!isBathMode && customization.hoodUp && (
             <g>
               {/* Optional Hood Ears/Spikes */}
               {customization.hoodStyle === 'bear_ears' && (
@@ -631,7 +771,27 @@ export const PenguCreature: React.FC<PenguCreatureProps> = ({
 
           {/* EYES */}
           <g transform={`translate(${pointerOffset.x * 0.4}, ${pointerOffset.y * 0.4})`}>
-            {isSleeping ? (
+            {isRefusing ? (
+              // Grumpy Refusal Squint (>.<) for TANAKKKK / NOOOO
+              <>
+                <path
+                  d="M 124 130 L 142 138 L 124 146"
+                  stroke="#0f172a"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                />
+                <path
+                  d="M 196 130 L 178 138 L 196 146"
+                  stroke="#0f172a"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="none"
+                />
+              </>
+            ) : isSleeping ? (
               // Sleepy Happy Closed Arcs
               <>
                 <path d="M 124 136 Q 134 144 144 136" stroke="#1e293b" strokeWidth="3.5" strokeLinecap="round" fill="none" />
@@ -667,17 +827,19 @@ export const PenguCreature: React.FC<PenguCreatureProps> = ({
                 <path d="M 176 131 L 194 131" stroke="#334155" strokeWidth="3" strokeLinecap="round" />
               </>
             ) : (
-              // Default Sparkle Anime Eyes
+              // 3D Beaded Anime Eyes with rich specular catchlights
               <>
                 {/* Left Eye */}
-                <ellipse cx="135" cy="134" rx="9" ry="11" fill="#0f172a" />
-                <circle cx="132" cy="130" r="3.5" fill="#ffffff" />
-                <circle cx="138" cy="138" r="1.8" fill="#ffffff" />
+                <ellipse cx="135" cy="134" rx="9.5" ry="11.5" fill="#090d16" />
+                <circle cx="132" cy="129.5" r="3.8" fill="#ffffff" />
+                <circle cx="138" cy="138" r="2" fill="#ffffff" opacity="0.85" />
+                <circle cx="130" cy="136" r="1.2" fill="#ffffff" opacity="0.6" />
 
                 {/* Right Eye */}
-                <ellipse cx="185" cy="134" rx="9" ry="11" fill="#0f172a" />
-                <circle cx="182" cy="130" r="3.5" fill="#ffffff" />
-                <circle cx="188" cy="138" r="1.8" fill="#ffffff" />
+                <ellipse cx="185" cy="134" rx="9.5" ry="11.5" fill="#090d16" />
+                <circle cx="182" cy="129.5" r="3.8" fill="#ffffff" />
+                <circle cx="188" cy="138" r="2" fill="#ffffff" opacity="0.85" />
+                <circle cx="180" cy="136" r="1.2" fill="#ffffff" opacity="0.6" />
               </>
             )}
           </g>
@@ -716,8 +878,30 @@ export const PenguCreature: React.FC<PenguCreatureProps> = ({
 
           {/* PLUSH ORANGE BEAK (Signature feature from user picture!) */}
           <g>
-            {isMouthOpen ? (
-              // Open Mouth (Eating or Squeaking)
+            {isRefusing ? (
+              // Grumpy Pouting Closed Beak
+              <g>
+                <ellipse
+                  cx="160"
+                  cy="150"
+                  rx="20"
+                  ry="13"
+                  fill="url(#orangeBeakGrad)"
+                  stroke="#c2410c"
+                  strokeWidth="1.5"
+                  className="filter drop-shadow-md"
+                />
+                {/* Grumpy mouth line */}
+                <path
+                  d="M 150 155 Q 160 148 170 155"
+                  stroke="#9a3412"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+              </g>
+            ) : isMouthOpen ? (
+              // Open Mouth (Eating, Talking, or Anticipating Food)
               <g>
                 {/* Upper Beak */}
                 <ellipse

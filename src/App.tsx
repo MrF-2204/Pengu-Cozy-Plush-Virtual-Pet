@@ -98,6 +98,21 @@ export default function App() {
     return () => clearInterval(interval);
   }, [isSleeping]);
 
+  // Prevent mobile browser scroll jumps & window offset drift
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY !== 0 || window.scrollX !== 0) {
+        window.scrollTo(0, 0);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, []);
+
   // Level Up celebratory check
   useEffect(() => {
     if (petState.level > prevLevelRef.current) {
@@ -201,15 +216,15 @@ export default function App() {
   };
 
   return (
-    <div className="relative w-full h-screen flex items-center justify-center bg-gradient-to-br from-pink-200 via-rose-100 to-purple-100 overflow-hidden font-sans">
+    <div className="fixed inset-0 w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-200 via-rose-100 to-purple-100 overflow-hidden font-sans">
       {/* Ambient soft plush blobs for desktop */}
       <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-pink-300/50 blur-3xl pointer-events-none" />
       <div className="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-indigo-300/40 blur-3xl pointer-events-none" />
 
       {/* Main Mobile App Frame */}
-      <div className="relative w-full h-full max-w-md mx-auto flex flex-col bg-slate-900 shadow-2xl overflow-hidden select-none md:rounded-[36px] md:h-[95vh] md:border-4 md:border-pink-300/80">
+      <div className="relative w-full h-full max-w-md mx-auto flex flex-col bg-white shadow-2xl overflow-hidden select-none md:rounded-[36px] md:h-[94vh] md:max-h-[94vh] md:border-4 md:border-pink-300/80">
       {/* Top Universal HUD Bar */}
-      <header className="relative z-30 w-full bg-white/95 backdrop-blur-md px-3 py-2 border-b border-pink-100 shadow-sm flex flex-col gap-1.5 flex-shrink-0">
+      <header className="relative z-30 w-full bg-white/95 backdrop-blur-md px-3 pt-[max(0.4rem,env(safe-area-inset-top))] pb-1 sm:pb-1.5 border-b border-pink-100 shadow-xs flex flex-col gap-1 flex-shrink-0">
         <div className="flex items-center justify-between">
           {/* Pet Name, Level & EXP */}
           <button
@@ -249,15 +264,6 @@ export default function App() {
                 🪙 {petState.coins}
               </span>
             </div>
-
-            {/* Share & Export to GitHub */}
-            <button
-              onClick={() => setShowShareModal(true)}
-              className="p-1.5 rounded-full bg-pink-50 hover:bg-pink-100 text-pink-700 transition active:scale-95"
-              aria-label="Share & Export Project"
-            >
-              <Share2 className="w-4 h-4" />
-            </button>
 
             {/* Scrapbook Polaroid Quick Button */}
             <button
@@ -368,7 +374,7 @@ export default function App() {
       </header>
 
       {/* Main Room Viewport */}
-      <main className="relative flex-1 w-full overflow-hidden">
+      <main className="relative flex-1 min-h-0 w-full overflow-hidden flex flex-col">
         {currentRoom === 'living' && (
           <LivingRoom
             petState={petState}
@@ -422,7 +428,7 @@ export default function App() {
 
       {/* Bottom Room Navigation Bar (Classic Pou / Talking Tom Navigation) */}
       <nav
-        className="relative z-30 w-full bg-white/95 backdrop-blur-md px-2 py-2 border-t border-pink-100 flex items-center justify-around flex-shrink-0 shadow-lg"
+        className="relative z-30 w-full bg-white/95 backdrop-blur-md px-1 sm:px-2 pt-1 pb-[max(0.4rem,env(safe-area-inset-bottom))] border-t border-pink-100 flex items-center justify-around flex-shrink-0 shadow-lg"
         aria-label="Room Navigation"
       >
         <button

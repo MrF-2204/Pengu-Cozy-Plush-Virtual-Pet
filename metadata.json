@@ -2,5 +2,7 @@
   "name": "Pengu: Cozy Plush Virtual Pet",
   "description": "An interactive virtual pet inspired by Pou & Talking Tom featuring an adorable hooded plush penguin. Pet, feed, wash, customize outfits and rooms, play mini-games, and nurture dynamic personality traits.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

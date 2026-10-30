@@ -146,9 +146,34 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
   };
 
   return (
-    <div className="relative w-full h-full flex flex-col justify-between p-3 bg-gradient-to-b from-pink-100 via-rose-50 to-purple-100 select-none overflow-hidden">
+    <div className="relative w-full h-full flex flex-col justify-between p-2 sm:p-3 bg-gradient-to-b from-pink-100 via-rose-50 to-purple-100 select-none overflow-hidden">
+      {/* Background Decor (Open Wooden Boutique Closet with Hanging Clothes & Vanity) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Open Closet Wooden Cabinet Side Doors */}
+        <div className="absolute top-0 bottom-0 left-0 w-8 bg-amber-900/15 border-r border-amber-900/25 flex flex-col justify-around py-12 items-center">
+          <div className="w-2 h-8 rounded-full bg-amber-800/30" />
+          <div className="w-2 h-8 rounded-full bg-amber-800/30" />
+        </div>
+        <div className="absolute top-0 bottom-0 right-0 w-8 bg-amber-900/15 border-l border-amber-900/25 flex flex-col justify-around py-12 items-center">
+          <div className="w-2 h-8 rounded-full bg-amber-800/30" />
+          <div className="w-2 h-8 rounded-full bg-amber-800/30" />
+        </div>
+
+        {/* Closet Clothes Hanger Rail with hanging garments */}
+        <div className="absolute top-10 left-8 right-8 h-3 bg-amber-700/30 border-b-2 border-amber-800/40 flex items-center justify-around px-3 opacity-80">
+          <span className="text-xs">🧥</span>
+          <span className="text-xs">👗</span>
+          <span className="text-xs">🧣</span>
+          <span className="text-xs">👕</span>
+          <span className="text-xs">👒</span>
+        </div>
+
+        {/* Dressing Velvet Oval Mat underneath Pengu */}
+        <div className="absolute bottom-[44vh] left-1/2 -translate-x-1/2 w-64 h-14 rounded-full bg-gradient-to-r from-pink-300/50 via-rose-300/40 to-purple-300/50 border border-pink-400/30 shadow-inner" />
+      </div>
+
       {/* Top Bar with One-Click Original Plush Preset */}
-      <div className="w-full max-w-md flex items-center justify-between gap-2 mx-auto">
+      <div className="relative z-10 w-full max-w-md flex items-center justify-between gap-2 mx-auto">
         <div className="flex items-center gap-1.5 bg-white/90 px-3 py-1.5 rounded-full shadow border border-pink-200">
           <Palette className="w-4 h-4 text-pink-600" />
           <span className="text-xs font-black text-pink-950">Wardrobe & Style Studio</span>
@@ -165,12 +190,12 @@ export const WardrobeView: React.FC<WardrobeViewProps> = ({
       </div>
 
       {/* Center Creature Live Dressing Room Preview */}
-      <div className="relative flex-1 flex flex-col items-center justify-center min-h-[160px] max-h-[220px]">
+      <div className="relative flex-1 flex flex-col items-center justify-center min-h-[160px] max-h-[230px]">
         <PenguCreature
           customization={customization}
           stats={INITIAL_STATS}
           personality={INITIAL_PERSONALITY}
-          scale={0.72}
+          scale={0.84}
         />
       </div>
 

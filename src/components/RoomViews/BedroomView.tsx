@@ -69,7 +69,7 @@ export const BedroomView: React.FC<BedroomViewProps> = ({
 
   return (
     <div
-      className={`relative w-full h-full flex flex-col items-center justify-between p-4 select-none overflow-hidden transition-colors duration-700 ${
+      className={`relative w-full h-full flex flex-col items-center justify-between p-2 sm:p-3 select-none overflow-hidden transition-colors duration-700 ${
         isSleeping
           ? 'bg-gradient-to-b from-indigo-950 via-slate-900 to-purple-950 text-white'
           : 'bg-gradient-to-b from-pink-100 via-rose-50 to-indigo-100 text-slate-800'
@@ -164,14 +164,21 @@ export const BedroomView: React.FC<BedroomViewProps> = ({
           ))}
         </AnimatePresence>
 
-        {/* Creature in Bed */}
-        <div className="relative">
+        {/* Creature in Bed with Cozy Headboard */}
+        <div className="relative flex flex-col items-center">
+          {/* Wooden Bed Headboard */}
+          <div className="absolute -top-10 w-64 h-24 rounded-t-3xl bg-amber-800/30 border-t-4 border-l-4 border-r-4 border-amber-900/40 shadow-inner flex items-center justify-around px-4 opacity-70">
+            <div className="w-1.5 h-16 bg-amber-900/30 rounded-full" />
+            <div className="w-1.5 h-16 bg-amber-900/30 rounded-full" />
+            <div className="w-1.5 h-16 bg-amber-900/30 rounded-full" />
+          </div>
+
           <PenguCreature
             customization={petState.customization}
             stats={petState.stats}
             personality={petState.personality}
             isSleeping={isSleeping}
-            scale={0.92}
+            scale={1.0}
           />
 
           {/* Cozy Pink Quilted Bed Duvet (resembling reference photo background) */}

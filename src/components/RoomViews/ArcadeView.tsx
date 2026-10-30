@@ -28,7 +28,16 @@ export const ArcadeView: React.FC<ArcadeViewProps> = ({
   });
 
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-between p-4 bg-gradient-to-b from-purple-100 via-indigo-50 to-pink-100 select-none overflow-hidden">
+    <div className="relative w-full h-full flex flex-col items-center justify-between p-2 sm:p-3 bg-gradient-to-b from-purple-950 via-slate-900 to-indigo-950 text-white select-none overflow-hidden">
+      {/* Background Decor (Retro Cyber Arcade Carpet & Neon Lights) */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Neon Floor Grid */}
+        <div className="absolute inset-0 opacity-20 bg-[linear-gradient(to_right,#a855f7_1px,transparent_1px),linear-gradient(to_bottom,#a855f7_1px,transparent_1px)] [background-size:24px_24px]" />
+        <div className="absolute top-10 left-6 w-32 h-32 rounded-full bg-purple-500/20 blur-3xl" />
+        <div className="absolute bottom-12 right-6 w-36 h-36 rounded-full bg-pink-500/20 blur-3xl" />
+        <div className="absolute top-4 right-10 text-xl opacity-40 animate-pulse">👾</div>
+        <div className="absolute top-16 left-8 text-sm opacity-40 animate-bounce">⭐</div>
+      </div>
       {activeGame === 'none' ? (
         <ArcadeLobby
           petState={petState}
